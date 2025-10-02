@@ -18,9 +18,9 @@ RUN adduser --system --uid 1001 nodejs
 COPY package*.json ./
 
 # Install orchestrator dependencies
-RUN npm ci --only=production
+RUN npm ci --only=production --legacy-peer-deps
 
-# Copy N8N source (we'll build it at runtime)
+# Copy N8N source (dependencies will be installed at runtime)
 COPY n8n/ ./n8n/
 
 # Copy orchestrator source
