@@ -2,14 +2,13 @@
 node_modules
 npm-debug.log
 
-# N8N data and cache (keep source code and dependencies)
+# N8N data and cache
 n8n_data
-# Keep N8N build artifacts and dependencies for runtime
-# n8n/.next
-# n8n/.turbo
-# n8n/node_modules
-# n8n/packages/*/node_modules
-# n8n/packages/*/dist
+n8n/.next
+n8n/.turbo
+n8n/node_modules
+n8n/packages/*/node_modules
+n8n/packages/*/dist
 
 # Logs
 logs
