@@ -77,7 +77,7 @@ services:
       
       # Application URLs
       - key: NEXT_PUBLIC_ORCHESTRATOR_URL
-        value: "https://admin.hyphrki.com"
+        value: "https://orchestrator.hyphrki.com"
       - key: NEXT_PUBLIC_APP_URL
         value: "https://hyphrki.com"
       
@@ -98,5 +98,5 @@ services:
 
 
 domains:
-  - domain: admin.hyphrki.com
+  - domain: orchestrator.hyphrki.com
     type: PRIMARY
