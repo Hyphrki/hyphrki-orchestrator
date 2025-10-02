@@ -54,7 +54,7 @@ app.use('/api/workflows', require('./api/workflows'));
 app.use('/api/executions', require('./api/executions'));
 app.use('/api/agents', require('./api/agents'));
 app.use('/api/admin', require('./api/admin'));
-app.use('/health', require('./routes/health'));
+app.use('/', require('./routes/health'));
 
 // Admin UI Route
 app.use('/admin', require('./routes/admin-ui'));
