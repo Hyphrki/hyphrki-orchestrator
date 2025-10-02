@@ -1,20 +1,17 @@
-# Node modules
+# Node modules (only root, not n8n source)
 node_modules
 npm-debug.log
 
-# N8N data and cache
+# N8N data and cache (not source)
 n8n_data
-n8n/.next
-n8n/.turbo
-n8n/node_modules
-n8n/packages/*/node_modules
-n8n/packages/*/dist
+.n8n
 
 # Logs
 logs
 *.log
 
 # Environment files
+.env
 .env.local
 .env.*.local
 
@@ -32,21 +29,24 @@ __tests__
 *.test.js
 *.spec.js
 test-results
+playwright-report
 
 # Documentation
 *.md
 !README.md
+!n8n/**/*.md
 
 # Mac
 .DS_Store
 
-# Build artifacts
+# Build artifacts (orchestrator only, not n8n)
 dist
 build
-.next
-.turbo
 
 # Temporary files
 tmp
 temp
 *.tmp
+
+# Backup files
+backup-*
