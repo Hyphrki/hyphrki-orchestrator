@@ -96,12 +96,6 @@ services:
     routes:
       - path: /
 
-databases:
-  - name: hyphrki-db
-    engine: PG
-    version: "15"
-    production: true
-    cluster_name: hyphrki-cluster
 
 domains:
   - domain: admin.hyphrki.com
