@@ -1,0 +1,67 @@
+import { d as defineComponent } from "./vendor-fd4bd18c.js";
+import { m as mapStores } from "./pinia-282957dc.js";
+import { H as useWorkflowsStore, p as i18n } from "./n8n-8ddd8349.js";
+import { g as genericHelpers } from "./index-00f166b0.js";
+const executionHelpers = defineComponent({
+  mixins: [genericHelpers],
+  computed: {
+    ...mapStores(useWorkflowsStore),
+    executionId() {
+      return this.$route.params.executionId;
+    },
+    workflowName() {
+      return this.workflowsStore.workflowName;
+    },
+    currentWorkflow() {
+      return this.$route.params.name || this.workflowsStore.workflowId;
+    },
+    executions() {
+      return this.workflowsStore.currentWorkflowExecutions;
+    },
+    activeExecution() {
+      return this.workflowsStore.activeWorkflowExecution;
+    }
+  },
+  methods: {
+    getExecutionUIDetails(execution) {
+      const status = {
+        name: "unknown",
+        startTime: this.formatDate(execution.startedAt),
+        label: "Status unknown",
+        runningTime: ""
+      };
+      if (execution.status === "waiting") {
+        status.name = "waiting";
+        status.label = this.$locale.baseText("executionsList.waiting");
+      } else if (execution.status === "canceled") {
+        status.label = this.$locale.baseText("executionsList.canceled");
+      } else if (execution.status === "running" || execution.status === "new") {
+        status.name = "running";
+        status.label = this.$locale.baseText("executionsList.running");
+      } else if (execution.status === "success") {
+        status.name = "success";
+        status.label = this.$locale.baseText("executionsList.succeeded");
+      } else if (execution.status === "failed" || execution.status === "crashed") {
+        status.name = "error";
+        status.label = this.$locale.baseText("executionsList.error");
+      }
+      if (!execution.status)
+        execution.status = "unknown";
+      if (execution.startedAt && execution.stoppedAt) {
+        const stoppedAt = execution.stoppedAt ? new Date(execution.stoppedAt).getTime() : Date.now();
+        status.runningTime = this.displayTimer(
+          stoppedAt - new Date(execution.startedAt).getTime(),
+          true
+        );
+      }
+      return status;
+    },
+    formatDate(fullDate) {
+      const { date, time } = this.convertToDisplayDate(fullDate);
+      return i18n.baseText("executionsList.started", { interpolate: { time, date } });
+    }
+  }
+});
+export {
+  executionHelpers as e
+};

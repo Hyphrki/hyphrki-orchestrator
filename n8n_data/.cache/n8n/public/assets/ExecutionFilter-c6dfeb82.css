@@ -1,0 +1,78 @@
+:root {
+  --header-height: 65;
+}:root {
+  --header-height: 65;
+}
+._group_1153r_5 label,
+._group_1153r_5 ._label_1153r_6 {
+  display: inline-block;
+  font-size: var(--font-size-2xs);
+  margin: var(--spacing-s) 0 var(--spacing-3xs);
+}
+._subGroup_1153r_12 {
+  padding: 0 0 var(--spacing-xs) var(--spacing-s);
+}
+._subGroup_1153r_12 label,
+._subGroup_1153r_12 ._label_1153r_6 {
+  font-size: var(--font-size-3xs);
+  margin: var(--spacing-4xs) 0 var(--spacing-4xs);
+}
+._dates_1153r_21 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border: 1px solid var(--color-foreground-base);
+  border-radius: var(--border-radius-base);
+  white-space: nowrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+._divider_1153r_29 {
+  padding: 0 var(--spacing-m);
+  line-height: 100%;
+}
+._resetBtn_1153r_34 {
+  padding: 0;
+  margin: var(--spacing-xs) 0 0;
+}
+._tooltipIcon_1153r_39 {
+  color: var(--color-text-light);
+}[data-v-ec1365f5]:root {
+  --header-height: 65;
+}
+[data-v-ec1365f5] .el-date-editor input {
+  height: 36px;
+  border: 0;
+  padding-right: 0;
+}
+[data-v-ec1365f5] .el-date-editor .el-input__prefix {
+  color: var(--color-foreground-dark);
+}
+[data-v-ec1365f5] .el-date-editor:last-of-type input {
+  padding-left: 0;
+}
+[data-v-ec1365f5] .el-date-editor:last-of-type .el-input__prefix {
+  display: none;
+}
+[data-v-ec1365f5] .el-select-dropdown.el-popper[data-popper-placement^="bottom"] > .popper__arrow {
+  top: -6px;
+  left: 50%;
+  right: unset;
+  margin-bottom: 0;
+  margin-right: 3px;
+  border-left-width: 6px;
+  border-top-width: 0;
+  border-bottom-color: var(--border-color-light);
+  border-right-color: transparent;
+}
+[data-v-ec1365f5] .el-select-dropdown.el-popper[data-popper-placement^="bottom"] > .popper__arrow::after {
+  top: 1px;
+  left: unset;
+  bottom: unset;
+  margin-left: -6px;
+  border-left-width: 6px;
+  border-top-width: 0;
+  border-bottom-color: var(--color-foreground-xlight);
+  border-right-color: transparent;
+}

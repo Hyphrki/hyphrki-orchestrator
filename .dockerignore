@@ -1,0 +1,52 @@
+# Node modules
+node_modules
+npm-debug.log
+
+# N8N data and cache
+n8n_data
+n8n/.next
+n8n/.turbo
+n8n/node_modules
+n8n/packages/*/node_modules
+n8n/packages/*/dist
+
+# Logs
+logs
+*.log
+
+# Environment files
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+
+# Git
+.git
+.gitignore
+
+# Tests
+tests
+__tests__
+*.test.js
+*.spec.js
+test-results
+
+# Documentation
+*.md
+!README.md
+
+# Mac
+.DS_Store
+
+# Build artifacts
+dist
+build
+.next
+.turbo
+
+# Temporary files
+tmp
+temp
+*.tmp

@@ -1,0 +1,47 @@
+:root {
+  --header-height: 65;
+}
+body {
+  background-color: var(--color-background-light);
+}
+._container_1995o_9 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding-top: var(--spacing-2xl);
+}
+._container_1995o_9 > * {
+  margin-bottom: var(--spacing-l);
+  width: 352px;
+}
+._logoContainer_1995o_20 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+._formContainer_1995o_25 {
+  padding-bottom: var(--spacing-xl);
+}
+._headerContainer_1995o_29 {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+._formError_1995o_34 input {
+  border-color: var(--color-danger);
+}
+._recoveryCodeLink_1995o_38 {
+  text-decoration: underline;
+}
+._infoBox_1995o_42 {
+  padding-top: var(--spacing-4xs);
+}

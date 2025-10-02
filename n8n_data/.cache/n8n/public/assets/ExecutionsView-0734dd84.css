@@ -1,0 +1,231 @@
+:root {
+  --header-height: 65;
+}
+._execListWrapper_1h4m6_5 {
+  display: grid;
+  grid-template-rows: 1fr 0;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  max-width: 1280px;
+}
+._execList_1h4m6_5 {
+  position: relative;
+  height: 100%;
+  overflow: auto;
+  padding: var(--spacing-l) var(--spacing-l) 0;
+}
+@media (min-width: 1200px) {
+._execList_1h4m6_5 {
+    padding: var(--spacing-2xl) var(--spacing-2xl) 0;
+}
+}
+._execListHeader_1h4m6_26 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin-bottom: var(--spacing-s);
+}
+._execListHeaderControls_1h4m6_33 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+._selectionOptions_1h4m6_39 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: absolute;
+  padding: var(--spacing-2xs);
+  z-index: 2;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  bottom: var(--spacing-3xl);
+  background: var(--color-background-dark);
+  border-radius: var(--border-radius-base);
+  color: var(--color-text-xlight);
+  font-size: var(--font-size-2xs);
+}
+._selectionOptions_1h4m6_39 button {
+  margin-left: var(--spacing-2xs);
+}
+._statusColumn_1h4m6_57 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+._spinner_1h4m6_62 {
+  margin-right: var(--spacing-2xs);
+}
+._status_1h4m6_57 {
+  line-height: 22.6px;
+  text-align: center;
+  font-size: var(--font-size-s);
+  font-weight: var(--font-weight-bold);
+}
+._crashed_1h4m6_72 ._status_1h4m6_57, ._failed_1h4m6_72 ._status_1h4m6_57 {
+  color: var(--color-danger);
+}
+._waiting_1h4m6_75 ._status_1h4m6_57 {
+  color: var(--color-secondary);
+}
+._success_1h4m6_78 ._status_1h4m6_57 {
+  font-weight: var(--font-weight-normal);
+}
+._new_1h4m6_81 ._status_1h4m6_57, ._running_1h4m6_81 ._status_1h4m6_57 {
+  color: var(--color-warning);
+}
+._unknown_1h4m6_84 ._status_1h4m6_57 {
+  color: var(--color-background-dark);
+}
+._buttonCell_1h4m6_88 {
+  overflow: hidden;
+}
+._buttonCell_1h4m6_88 button {
+  -webkit-transform: translateX(1000%);
+          transform: translateX(1000%);
+  -webkit-transition: -webkit-transform 0s;
+  transition: -webkit-transform 0s;
+  transition: transform 0s;
+  transition: transform 0s, -webkit-transform 0s;
+}
+._buttonCell_1h4m6_88 button:focus-visible, ._execRow_1h4m6_95:hover ._buttonCell_1h4m6_88 button {
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
+}
+._execTable_1h4m6_99 {
+  /*
+    Table height needs to be set to 0 in order to use height 100% for elements in table cells
+  */
+  height: 0;
+  width: 100%;
+  text-align: left;
+  font-size: var(--font-size-s);
+}
+._execTable_1h4m6_99 thead th {
+  position: sticky;
+  top: calc(var(--spacing-3xl) * -1);
+  z-index: 2;
+  padding: var(--spacing-s) var(--spacing-s) var(--spacing-s) 0;
+  background: var(--color-table-header-background);
+}
+._execTable_1h4m6_99 thead th:first-child {
+  padding-left: var(--spacing-s);
+}
+._execTable_1h4m6_99 th,
+._execTable_1h4m6_99 td {
+  height: 100%;
+  padding: var(--spacing-s) var(--spacing-s) var(--spacing-s) 0;
+  background: var(--color-table-row-background);
+}
+._execTable_1h4m6_99 th:not(:first-child, :nth-last-child(-n+3)),
+._execTable_1h4m6_99 td:not(:first-child, :nth-last-child(-n+3)) {
+  width: 100%;
+}
+._execTable_1h4m6_99 th:nth-last-child(-n+2),
+._execTable_1h4m6_99 td:nth-last-child(-n+2) {
+  padding-left: 0;
+}
+@media (min-width: 992px) {
+._execTable_1h4m6_99 th:not(:nth-child(2)),
+  ._execTable_1h4m6_99 th:not(:nth-child(2)) div,
+  ._execTable_1h4m6_99 th:not(:nth-child(2)) span,
+  ._execTable_1h4m6_99 td:not(:nth-child(2)),
+  ._execTable_1h4m6_99 td:not(:nth-child(2)) div,
+  ._execTable_1h4m6_99 td:not(:nth-child(2)) span {
+    white-space: nowrap;
+}
+}
+._execTable_1h4m6_99 ._execRow_1h4m6_95 {
+  color: var(--color-text-base);
+}
+._execTable_1h4m6_99 ._execRow_1h4m6_95 td:first-child {
+  width: 30px;
+  padding: 0 var(--spacing-s) 0 0;
+  /*
+    This is needed instead of table cell border because they are overlapping the sticky header
+  */
+}
+._execTable_1h4m6_99 ._execRow_1h4m6_95 td:first-child::before {
+  content: "";
+  display: inline-block;
+  width: var(--spacing-4xs);
+  height: 100%;
+  vertical-align: middle;
+  margin-right: var(--spacing-xs);
+}
+._execTable_1h4m6_99 ._execRow_1h4m6_95:nth-child(even) td {
+  background: var(--color-table-row-even-background);
+}
+._execTable_1h4m6_99 ._execRow_1h4m6_95:hover td {
+  background: var(--color-table-row-hover-background);
+}
+._execTable_1h4m6_99 ._execRow_1h4m6_95._crashed_1h4m6_72 td:first-child::before, ._execTable_1h4m6_99 ._execRow_1h4m6_95._failed_1h4m6_72 td:first-child::before {
+  background: var(--execution-card-border-error);
+}
+._execTable_1h4m6_99 ._execRow_1h4m6_95._success_1h4m6_78 td:first-child::before {
+  background: var(--execution-card-border-success);
+}
+._execTable_1h4m6_99 ._execRow_1h4m6_95._new_1h4m6_81 td:first-child::before, ._execTable_1h4m6_99 ._execRow_1h4m6_95._running_1h4m6_81 td:first-child::before {
+  background: var(--execution-card-border-running);
+}
+._execTable_1h4m6_99 ._execRow_1h4m6_95._waiting_1h4m6_75 td:first-child::before {
+  background: var(--execution-card-border-waiting);
+}
+._execTable_1h4m6_99 ._execRow_1h4m6_95._unknown_1h4m6_84 td:first-child::before {
+  background: var(--execution-card-border-unknown);
+}
+._loadMore_1h4m6_182 {
+  margin: var(--spacing-m) 0;
+  width: 100%;
+  text-align: center;
+}
+._loadedAll_1h4m6_188 {
+  text-align: center;
+  font-size: var(--font-size-s);
+  color: var(--color-text-light);
+  margin: var(--spacing-l) 0;
+}
+._actions_1h4m6_195._deleteOnly_1h4m6_195 {
+  padding: 0;
+}
+._retryAction_1h4m6_199 + ._deleteAction_1h4m6_199 {
+  border-top: 1px solid var(--color-foreground-light);
+}
+._selectAll_1h4m6_203 {
+  display: inline-block;
+  margin: 0 0 var(--spacing-s) var(--spacing-s);
+  color: var(--color-danger);
+}
+._filterLoader_1h4m6_209 {
+  width: 220px;
+  height: 32px;
+}
+._tableLoader_1h4m6_214 {
+  width: 100%;
+  height: 48px;
+  margin-bottom: var(--spacing-2xs);
+}
+._link_1h4m6_220 {
+  color: var(--color-text-base);
+  text-decoration: underline;
+}

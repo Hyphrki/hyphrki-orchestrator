@@ -1,0 +1,32 @@
+:root {
+  --header-height: 65;
+}
+._container_1teme_5 > * {
+  margin-bottom: var(--spacing-2xl);
+}
+._header_1teme_9 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  white-space: nowrap;
+}
+._header_1teme_9 *:first-child {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+._card_1teme_18 {
+  position: relative;
+}
+._delete_1teme_22 {
+  position: absolute;
+  display: inline-block;
+  top: var(--spacing-s);
+  right: var(--spacing-s);
+}
+._hint_1teme_29 {
+  color: var(--color-text-light);
+}

@@ -1,0 +1,44 @@
+:root {
+  --header-height: 65;
+}
+._container_2z8pg_5 {
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+._workflow_2z8pg_12 {
+  visibility: hidden;
+  height: 0;
+  width: 0;
+}
+._show_2z8pg_18 {
+  visibility: visible;
+  height: 100%;
+  width: 100%;
+}
+._openNDV_2z8pg_24 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 9999999;
+}
+._spinner_2z8pg_33 {
+  color: var(--color-primary);
+  position: absolute;
+  top: 50% !important;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+._imageLoader_2z8pg_41 {
+  width: 100%;
+}
+._executionPreview_2z8pg_45 {
+  height: 100%;
+}

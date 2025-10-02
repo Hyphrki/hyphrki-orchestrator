@@ -1,0 +1,31 @@
+:root {
+  --header-height: 65;
+}
+._zoomMenu_1ufow_5 {
+  position: absolute;
+  width: 210px;
+  bottom: var(--spacing-2xl);
+  left: 35px;
+  line-height: 25px;
+  color: #444;
+  padding-right: 5px;
+}
+._zoomMenu_1ufow_5 button {
+  border: var(--border-base);
+}
+._zoomMenu_1ufow_5 > * + * {
+  margin-left: var(--spacing-3xs);
+}
+._zoomMenu_1ufow_5 > *:hover {
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+}
+@media (max-width: 600px) {
+._regularZoomMenu_1ufow_25 {
+    bottom: 90px;
+}
+}
+._demoZoomMenu_1ufow_30 {
+  left: 10px;
+  bottom: 10px;
+}

@@ -1,0 +1,15 @@
+:root {
+  --header-height: 65;
+}
+._actionsGroup_1ai92_5 {
+  position: sticky;
+  height: 0;
+  overflow: visible;
+  z-index: 10;
+  top: 0;
+  padding-right: var(--spacing-s);
+  opacity: 0;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+  text-align: right;
+}

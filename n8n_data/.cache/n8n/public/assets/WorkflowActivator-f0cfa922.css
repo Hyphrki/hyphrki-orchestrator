@@ -1,0 +1,31 @@
+:root {
+  --header-height: 65;
+}
+._activeStatusText_1dwsh_5 {
+  width: 64px;
+  padding-right: var(--spacing-2xs);
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  display: inline-block;
+  text-align: right;
+}[data-v-b7dc7897]:root {
+  --header-height: 65;
+}
+.workflow-activator[data-v-b7dc7897] {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.workflow-activator[data-v-b7dc7897] .el-loading-spinner {
+  margin-top: -10px;
+}
+.could-not-be-started[data-v-b7dc7897] {
+  display: inline-block;
+  color: var(--color-text-danger);
+  margin-left: 0.5em;
+}

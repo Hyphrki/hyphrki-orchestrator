@@ -1,0 +1,50 @@
+:root {
+  --header-height: 65;
+}
+._nodeButtonsWrapper_zpked_5 {
+  position: absolute;
+  width: 150px;
+  height: 200px;
+  top: 0;
+  right: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+._addStickyButton_zpked_14 {
+  margin-top: var(--spacing-2xs);
+  opacity: 0;
+  -webkit-transition: 0.1s;
+  transition: 0.1s;
+  -webkit-transition-timing-function: linear;
+          transition-timing-function: linear;
+}
+._visibleButton_zpked_21 {
+  opacity: 1;
+  pointer-events: all;
+}
+._noEvents_zpked_26 {
+  pointer-events: none;
+}
+._nodeCreatorButton_zpked_30 {
+  position: absolute;
+  text-align: center;
+  top: var(--spacing-s);
+  right: var(--spacing-s);
+  pointer-events: all !important;
+}
+._nodeCreatorButton_zpked_30 button {
+  border-color: var(--color-button-node-creator-border-font);
+  color: var(--color-button-node-creator-border-font);
+}
+._nodeCreatorButton_zpked_30 button:hover {
+  border-color: var(--color-button-node-creator-hover-border-font);
+  color: var(--color-button-node-creator-hover-border-font);
+  background: var(--color-button-node-creator-background);
+}
+._nodeCreatorPlus_zpked_47 {
+  border-width: 2px;
+  border-radius: var(--border-radius-base);
+  width: 36px;
+  height: 36px;
+}

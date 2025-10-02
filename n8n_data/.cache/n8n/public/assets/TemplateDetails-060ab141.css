@@ -1,0 +1,30 @@
+:root {
+  --header-height: 65;
+}
+._block_phs27_5 {
+  padding-bottom: var(--spacing-xl);
+}
+._header_phs27_9 {
+  padding: 0 0 var(--spacing-4xs);
+  border-bottom: var(--border-base);
+}
+._content_phs27_14 {
+  padding: var(--spacing-xs) 0 0;
+}:root {
+  --header-height: 65;
+}
+._icons_1f0ax_5 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+._icon_1f0ax_5 {
+  margin-right: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+  cursor: pointer;
+}
+._text_1f0ax_16 {
+  padding-bottom: var(--spacing-xs);
+}

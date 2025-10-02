@@ -1,0 +1,64 @@
+[data-v-10abe54a]:root {
+  --header-height: 65;
+}
+.fixed-collection-parameter[data-v-10abe54a] {
+  padding-left: var(--spacing-s);
+}
+.fixed-collection-parameter[data-v-10abe54a] .button {
+  font-weight: var(--font-weight-normal);
+  --button-font-color: var(--color-text-dark);
+  --button-border-color: var(--color-foreground-base);
+  --button-background-color: var(--color-background-base);
+  --button-hover-font-color: var(--color-text-dark);
+  --button-hover-border-color: var(--color-foreground-base);
+  --button-hover-background-color: var(--color-background-base);
+  --button-active-font-color: var(--color-text-dark);
+  --button-active-border-color: var(--color-foreground-base);
+  --button-active-background-color: var(--color-background-base);
+  --button-focus-font-color: var(--color-text-dark);
+  --button-focus-border-color: var(--color-foreground-base);
+  --button-focus-background-color: var(--color-background-base);
+}
+.fixed-collection-parameter[data-v-10abe54a] .button:active, .fixed-collection-parameter[data-v-10abe54a] .button.active, .fixed-collection-parameter[data-v-10abe54a] .button:focus {
+  outline: none;
+}
+.fixed-collection-parameter-property[data-v-10abe54a] {
+  margin: var(--spacing-xs) 0;
+}
+.delete-option[data-v-10abe54a] {
+  display: none;
+  position: absolute;
+  z-index: 999;
+  color: #f56c6c;
+  left: 0;
+  top: 0.5em;
+  width: 15px;
+  height: 100%;
+}
+.parameter-item:hover > .parameter-item-wrapper > .delete-option[data-v-10abe54a] {
+  display: block;
+}
+.parameter-item[data-v-10abe54a] {
+  position: relative;
+  padding: 0 0 0 1em;
+}
+.parameter-item + .parameter-item .parameter-item-wrapper .delete-option[data-v-10abe54a] {
+  top: 14px;
+}
+.border-top-dashed[data-v-10abe54a] {
+  border-top: 1px dashed #999;
+}
+.no-items-exist[data-v-10abe54a] {
+  margin: var(--spacing-xs) 0;
+}
+.sort-icon[data-v-10abe54a] {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  margin-left: 1px;
+  margin-top: 0.5em;
+}

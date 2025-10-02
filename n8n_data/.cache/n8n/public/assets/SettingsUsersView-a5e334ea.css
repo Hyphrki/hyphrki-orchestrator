@@ -1,0 +1,24 @@
+:root {
+  --header-height: 65;
+}
+._container_n5y84_5 {
+  height: 100%;
+  padding-right: var(--spacing-2xs);
+}
+._container_n5y84_5 > * {
+  margin-bottom: var(--spacing-2xl);
+}
+._usersContainer_n5y84_13 > * {
+  margin-bottom: var(--spacing-2xs);
+}
+._buttonContainer_n5y84_17 {
+  display: inline-block;
+  float: right;
+  margin-bottom: var(--spacing-l);
+}
+._setupInfoContainer_n5y84_23 {
+  max-width: 728px;
+}
+._alert_n5y84_27 {
+  left: calc(50% + 100px);
+}
