@@ -1,4 +1,5 @@
 name: hyphrki-orchestrator
+# Updated for deployment
 region: nyc
 services:
   - name: orchestrator
