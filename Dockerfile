@@ -1,27 +1,8 @@
-# Multi-stage build for Hyphrki Orchestrator with N8N
-FROM node:20-alpine AS builder
-
-# Install build dependencies
-RUN apk add --no-cache python3 make g++ curl git
-
-# Install pnpm
-RUN npm install -g pnpm@9
-
-WORKDIR /app
-
-# Copy N8N source
-COPY n8n/ ./n8n/
-
-# Build N8N
-WORKDIR /app/n8n
-RUN pnpm install --frozen-lockfile
-RUN pnpm build
-
-# Production stage
+# Production build for Hyphrki Orchestrator with N8N
 FROM node:20-alpine
 
 # Install runtime dependencies
-RUN apk add --no-cache curl python3 make g++
+RUN apk add --no-cache curl python3 make g++ git
 
 # Install pnpm
 RUN npm install -g pnpm@9
@@ -39,8 +20,8 @@ COPY package*.json ./
 # Install orchestrator dependencies
 RUN npm ci --only=production
 
-# Copy built N8N from builder
-COPY --from=builder /app/n8n ./n8n
+# Copy N8N source (we'll build it at runtime)
+COPY n8n/ ./n8n/
 
 # Copy orchestrator source
 COPY src/ ./src/
