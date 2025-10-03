@@ -66,6 +66,7 @@ import type {
 	WorkflowRequest,
 } from '@/requests';
 import { registerController } from '@/decorators';
+import { AgentsController } from '@/controllers/agents.controller';
 import { AuthController } from '@/controllers/auth.controller';
 import { BinaryDataController } from '@/controllers/binaryData.controller';
 import { LdapController } from '@/controllers/ldap.controller';
@@ -267,6 +268,7 @@ export class Server extends AbstractServer {
 		const controllers: object[] = [
 			new EventBusController(),
 			new EventBusControllerEE(),
+			Container.get(AgentsController),
 			Container.get(AuthController),
 			Container.get(OAuth1CredentialController),
 			Container.get(OAuth2CredentialController),

@@ -70,6 +70,18 @@ export type AuthenticatedRequest<
 	user: User;
 	mailer?: UserManagementMailer;
 	globalMemberRole?: Role;
+	hyphrkiUser?: {
+		id: string;
+		email: string;
+		organization_id: string;
+		role: string;
+		first_name: string | null;
+		last_name: string | null;
+		email_verified: boolean;
+		status: string;
+		organization_name: string;
+		subscription_tier: string;
+	};
 };
 
 // ----------------------------------
