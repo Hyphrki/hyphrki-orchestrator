@@ -269,8 +269,8 @@ export class Server extends AbstractServer {
 		const controllers: object[] = [
 			new EventBusController(),
 			new EventBusControllerEE(),
-			Container.get(AdminController),
-			Container.get(AgentsController),
+			new AdminController(),
+			new AgentsController(),
 			Container.get(AuthController),
 			Container.get(OAuth1CredentialController),
 			Container.get(OAuth2CredentialController),

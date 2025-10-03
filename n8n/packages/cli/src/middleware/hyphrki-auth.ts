@@ -83,8 +83,8 @@ export const hyphrkiAuthMiddleware: RequestHandler = async (req, res, next) => {
 				u.id, u.email, u.organization_id, u.role,
 				u.first_name, u.last_name, u.email_verified, u.status,
 				o.name as organization_name, o.subscription_tier
-			FROM users u
-			LEFT JOIN organizations o ON u.organization_id = o.id
+			FROM public.users u
+			LEFT JOIN public.organizations o ON u.organization_id = o.id
 			WHERE u.id = $1 AND u.status = 'active' AND u.is_deleted = false`,
 			[decoded.userId],
 		);
