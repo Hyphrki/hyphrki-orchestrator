@@ -44,21 +44,23 @@ services:
       - key: DATABASE_URL
         scope: RUN_AND_BUILD_TIME
         type: SECRET
-      - key: DB_NAME
+      - key: DB_POSTGRESDB_HOST
         scope: RUN_AND_BUILD_TIME
         type: SECRET
-      - key: DB_HOST
+      - key: DB_POSTGRESDB_PORT
         scope: RUN_AND_BUILD_TIME
         type: SECRET
-      - key: DB_PORT
+      - key: DB_POSTGRESDB_DATABASE
         scope: RUN_AND_BUILD_TIME
         type: SECRET
-      - key: DB_USER
+      - key: DB_POSTGRESDB_USER
         scope: RUN_AND_BUILD_TIME
         type: SECRET
-      - key: DB_PASSWORD
+      - key: DB_POSTGRESDB_PASSWORD
         scope: RUN_AND_BUILD_TIME
         type: SECRET
+      - key: DB_POSTGRESDB_SSL_ENABLED
+        value: "true"
 
       # JWT & Security
       - key: JWT_SECRET
