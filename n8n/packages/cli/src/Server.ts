@@ -100,6 +100,7 @@ import { EventBusControllerEE } from '@/eventbus/eventBus.controller.ee';
 import { licenseController } from './license/license.controller';
 import { setupPushServer, setupPushHandler } from '@/push';
 import { setupAuthMiddlewares } from './middlewares';
+import { hyphrkiAuthMiddleware } from '@/middleware/hyphrki-auth';
 import { handleLdapInit, isLdapEnabled } from './Ldap/helpers';
 import { AbstractServer } from './AbstractServer';
 import { PostHogClient } from './posthog';
@@ -380,6 +381,9 @@ export class Server extends AbstractServer {
 		}
 		// Parse cookies for easier access
 		this.app.use(cookieParser());
+
+		// Hyphrki authentication middleware
+		this.app.use(hyphrkiAuthMiddleware);
 
 		const { restEndpoint, app } = this;
 		setupPushHandler(restEndpoint, app);
