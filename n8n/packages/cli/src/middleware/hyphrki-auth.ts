@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import type { Pool as PgPool } from 'pg';
 
 // Import pg dynamically to avoid type issues
