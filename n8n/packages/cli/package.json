@@ -79,6 +79,7 @@
     "@types/localtunnel": "^1.9.0",
     "@types/lodash": "^4.14.195",
     "@types/passport-jwt": "^3.0.6",
+    "@types/pg": "^8.10.0",
     "@types/psl": "^1.1.0",
     "@types/replacestream": "^4.0.1",
     "@types/send": "^0.17.1",
