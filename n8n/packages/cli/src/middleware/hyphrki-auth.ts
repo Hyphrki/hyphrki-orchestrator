@@ -1,6 +1,10 @@
 import type { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
-import { Pool } from 'pg';
+import type { Pool as PgPool } from 'pg';
+
+// Import pg dynamically to avoid type issues
+const pgModule = require('pg');
+const { Pool } = pgModule as { Pool: new (config: any) => PgPool };
 
 // PostgreSQL connection pool
 const pool = new Pool({
@@ -125,7 +129,7 @@ export const requireAdmin: RequestHandler = (req, res, next) => {
 		});
 	}
 
-	next();
+	return next();
 };
 
 /**
