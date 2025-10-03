@@ -1,4 +1,4 @@
-# Multi-stage build for Hyphrki Orchestrator with N8N
+# Multi-stage build for Hyphrki Orchestrator (N8N-based)
 FROM node:20-alpine AS builder
 
 # Install build dependencies
@@ -10,18 +10,17 @@ RUN npm install -g pnpm@9
 WORKDIR /app
 
 # Copy N8N source
-COPY n8n/ ./n8n/
+COPY n8n/ ./
 
-# Build N8N with all dependencies
-WORKDIR /app/n8n
+# Install dependencies and build N8N
 RUN pnpm install --frozen-lockfile
 RUN pnpm build
 
 # Production stage
 FROM node:20-alpine
 
-# Install runtime dependencies including pnpm
-RUN apk add --no-cache curl python3 make g++
+# Install runtime dependencies
+RUN apk add --no-cache curl python3 make g++ git
 
 # Install pnpm globally for runtime
 RUN npm install -g pnpm@9
@@ -33,33 +32,33 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
-# Copy orchestrator package files
-COPY package*.json ./
-
-# Install orchestrator dependencies (as root before switching user)
-RUN npm ci --only=production --legacy-peer-deps
-
 # Copy built N8N from builder stage
-COPY --from=builder /app/n8n ./n8n
-
-# Copy orchestrator source
-COPY src/ ./src/
-COPY public/ ./public/
+COPY --from=builder /app ./
 
 # Create directories and set permissions
-RUN mkdir -p logs n8n_data /home/nodejs/.n8n && \
+RUN mkdir -p /home/nodejs/.n8n && \
     chown -R nodejs:nodejs /app /home/nodejs && \
     chmod -R 755 /home/nodejs/.n8n
 
 # Switch to nodejs user
 USER nodejs
 
-# Expose ports
-EXPOSE 5678 8081
+# Expose N8N port
+EXPOSE 5678
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:5678/health || exit 1
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:5678/healthz || exit 1
 
-# Start the application
-CMD ["npm", "start"]
+# Environment variables
+ENV N8N_PORT=5678
+ENV N8N_PROTOCOL=http
+ENV N8N_HOST=0.0.0.0
+ENV DB_TYPE=postgresdb
+ENV DB_POSTGRESDB_SCHEMA=n8n
+ENV EXECUTIONS_PROCESS=main
+ENV N8N_DIAGNOSTICS_ENABLED=false
+ENV N8N_VERSION_NOTIFICATIONS_ENABLED=false
+
+# Start N8N directly
+CMD ["pnpm", "start"]

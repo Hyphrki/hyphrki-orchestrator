@@ -1,8 +1,8 @@
 {
-  "name": "n8n",
+  "name": "hyphrki-orchestrator",
   "version": "1.17.0",
   "private": true,
-  "homepage": "https://n8n.io",
+  "homepage": "https://hyphrki.com",
   "engines": {
     "node": ">=18.10",
     "pnpm": ">=8.9"
