@@ -50,7 +50,7 @@ EXPOSE 5678
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:5678/healthz || exit 1
 
-# Environment variables
+# Environment variables - Hyphrki Orchestrator
 ENV N8N_PORT=5678
 ENV N8N_PROTOCOL=http
 ENV N8N_HOST=0.0.0.0
@@ -59,6 +59,9 @@ ENV DB_POSTGRESDB_SCHEMA=n8n
 ENV EXECUTIONS_PROCESS=main
 ENV N8N_DIAGNOSTICS_ENABLED=false
 ENV N8N_VERSION_NOTIFICATIONS_ENABLED=false
+ENV N8N_PERSONALIZATION_ENABLED=false
+ENV N8N_HIRING_BANNER_ENABLED=false
+ENV N8N_TEMPLATES_ENABLED=false
 
 # Start N8N directly
 CMD ["pnpm", "start"]
