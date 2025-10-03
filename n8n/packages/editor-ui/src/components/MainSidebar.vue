@@ -231,6 +231,14 @@ export default defineComponent({
 			const regularItems: IMenuItem[] = [
 				workflows,
 				{
+					id: 'agents',
+					icon: 'robot',
+					label: 'Agents',
+					customIconSize: 'medium',
+					position: 'top',
+					activateOnRouteNames: [VIEWS.AGENTS],
+				},
+				{
 					id: 'templates',
 					icon: 'box-open',
 					label: this.$locale.baseText('mainSidebar.templates'),
@@ -413,6 +421,12 @@ export default defineComponent({
 				case 'workflows': {
 					if (this.$router.currentRoute.name !== VIEWS.WORKFLOWS) {
 						this.goToRoute({ name: VIEWS.WORKFLOWS });
+					}
+					break;
+				}
+				case 'agents': {
+					if (this.$router.currentRoute.name !== VIEWS.AGENTS) {
+						this.goToRoute({ name: VIEWS.AGENTS });
 					}
 					break;
 				}
