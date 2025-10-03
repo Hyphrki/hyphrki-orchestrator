@@ -39,6 +39,7 @@ const TemplatesSearchView = async () => import('@/views/TemplatesSearchView.vue'
 const CredentialsView = async () => import('@/views/CredentialsView.vue');
 const ExecutionsView = async () => import('@/views/ExecutionsView.vue');
 const WorkflowsView = async () => import('@/views/WorkflowsView.vue');
+const AgentsDashboard = async () => import('@/views/AgentsDashboard.vue');
 const VariablesView = async () => import('@/views/VariablesView.vue');
 const SettingsUsageAndPlan = async () => import('./views/SettingsUsageAndPlan.vue');
 const SettingsSso = async () => import('./views/SettingsSso.vue');
@@ -237,6 +238,21 @@ export const routes = [
 		name: VIEWS.WORKFLOWS,
 		components: {
 			default: WorkflowsView,
+			sidebar: MainSidebar,
+		},
+		meta: {
+			permissions: {
+				allow: {
+					loginStatus: [LOGIN_STATUS.LoggedIn],
+				},
+			},
+		},
+	},
+	{
+		path: '/agents',
+		name: VIEWS.AGENTS,
+		components: {
+			default: AgentsDashboard,
 			sidebar: MainSidebar,
 		},
 		meta: {

@@ -221,12 +221,8 @@ export const useUIStore = defineStore(STORES.UI, {
 			return this.theme === 'system' ? getPreferredTheme() : this.theme;
 		},
 		logo(): string {
-			const { releaseChannel } = useSettingsStore().settings;
-			const type = this.appliedTheme === 'dark' ? '-dark-mode.svg' : '.svg';
-
-			return releaseChannel === 'stable'
-				? `n8n-logo-expanded${type}`
-				: `n8n-${releaseChannel}-logo${type}`;
+			// Use Orchestrator branding
+			return 'orchestrator-logo-expanded.svg';
 		},
 		contextBasedTranslationKeys() {
 			const settingsStore = useSettingsStore();

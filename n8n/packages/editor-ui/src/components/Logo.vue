@@ -1,5 +1,5 @@
 <template>
-	<img :src="logoPath" :class="$style.img" alt="n8n.io" />
+	<img :src="logoPath" :class="$style.img" alt="Orchestrator" />
 </template>
 
 <script lang="ts">
