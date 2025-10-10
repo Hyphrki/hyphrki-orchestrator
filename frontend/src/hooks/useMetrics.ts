@@ -38,27 +38,36 @@ export interface ExecutionMetrics {
 
 // API functions
 const fetchOverviewMetrics = async (): Promise<OverviewMetrics> => {
-  const response = await axios.get(`${API_BASE_URL}/api/metrics/overview`);
+  const token = localStorage.getItem('accessToken');
+  const response = await axios.get(`${API_BASE_URL}/metrics/overview`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return response.data;
 };
 
 const fetchAgentMetrics = async (timeRange: string = '1h'): Promise<AgentMetrics> => {
-  const response = await axios.get(`${API_BASE_URL}/api/metrics/agents`, {
+  const token = localStorage.getItem('accessToken');
+  const response = await axios.get(`${API_BASE_URL}/metrics/agents`, {
     params: { timeRange },
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 };
 
 const fetchSystemMetrics = async (timeRange: string = '1h'): Promise<SystemMetrics> => {
-  const response = await axios.get(`${API_BASE_URL}/api/metrics/system`, {
+  const token = localStorage.getItem('accessToken');
+  const response = await axios.get(`${API_BASE_URL}/metrics/system`, {
     params: { timeRange },
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 };
 
 const fetchExecutionMetrics = async (timeRange: string = '1h'): Promise<ExecutionMetrics> => {
-  const response = await axios.get(`${API_BASE_URL}/api/metrics/executions`, {
+  const token = localStorage.getItem('accessToken');
+  const response = await axios.get(`${API_BASE_URL}/metrics/executions`, {
     params: { timeRange },
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 };

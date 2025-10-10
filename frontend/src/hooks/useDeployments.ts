@@ -37,7 +37,7 @@ export interface Execution {
   };
 }
 
-const getAuthToken = () => localStorage.getItem('authToken');
+const getAuthToken = () => localStorage.getItem('accessToken');
 
 export const useDeployments = () => {
   return useQuery({

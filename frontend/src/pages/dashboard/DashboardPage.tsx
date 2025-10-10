@@ -15,67 +15,13 @@ import { MetricsCard } from '../../components/dashboard/MetricsCard';
 import { AgentStatusCard } from '../../components/dashboard/AgentStatusCard';
 import { PerformanceChart } from '../../components/dashboard/PerformanceChart';
 import { useDeployments, useExecutions } from '../../hooks/useDeployments';
-
-// Mock data - in a real app, this would come from API
-const mockAgents = [
-  {
-    id: '1',
-    name: 'Customer Support Bot',
-    framework: 'langgraph',
-    status: 'running' as const,
-    lastRun: '2 minutes ago',
-    executionCount: 1247,
-    avgExecutionTime: 245,
-    memoryUsage: 128,
-    cpuUsage: 12,
-  },
-  {
-    id: '2',
-    name: 'Data Analysis Agent',
-    framework: 'agno',
-    status: 'running' as const,
-    lastRun: '5 minutes ago',
-    executionCount: 892,
-    avgExecutionTime: 1560,
-    memoryUsage: 256,
-    cpuUsage: 24,
-  },
-  {
-    id: '3',
-    name: 'Content Generation Crew',
-    framework: 'crewai',
-    status: 'paused' as const,
-    lastRun: '1 hour ago',
-    executionCount: 456,
-    avgExecutionTime: 3200,
-    memoryUsage: 512,
-    cpuUsage: 8,
-  },
-  {
-    id: '4',
-    name: 'Workflow Automation',
-    framework: 'n8n',
-    status: 'stopped' as const,
-    lastRun: '3 hours ago',
-    executionCount: 2341,
-    avgExecutionTime: 89,
-    memoryUsage: 64,
-    cpuUsage: 3,
-  },
-];
-
-const mockPerformanceData = [
-  { timestamp: '00:00', executions: 12, avgResponseTime: 245, memoryUsage: 128, cpuUsage: 12 },
-  { timestamp: '04:00', executions: 8, avgResponseTime: 267, memoryUsage: 132, cpuUsage: 14 },
-  { timestamp: '08:00', executions: 23, avgResponseTime: 234, memoryUsage: 145, cpuUsage: 18 },
-  { timestamp: '12:00', executions: 31, avgResponseTime: 198, memoryUsage: 156, cpuUsage: 22 },
-  { timestamp: '16:00', executions: 28, avgResponseTime: 212, memoryUsage: 148, cpuUsage: 20 },
-  { timestamp: '20:00', executions: 19, avgResponseTime: 223, memoryUsage: 138, cpuUsage: 16 },
-];
+import { useExecutionMetrics, useOverviewMetrics } from '../../hooks/useMetrics';
 
 const DashboardPage: React.FC = () => {
   const { data: deployments, isLoading: deploymentsLoading } = useDeployments();
   const { data: executions, isLoading: executionsLoading } = useExecutions();
+  const { data: metricsOverview, isLoading: metricsLoading } = useOverviewMetrics();
+  const { data: executionMetrics, isLoading: executionMetricsLoading } = useExecutionMetrics('24h');
 
   // Calculate metrics from real data
   const totalAgents = deployments?.length || 0;
@@ -113,7 +59,16 @@ const DashboardPage: React.FC = () => {
     // TODO: Implement deployment status update API
   };
 
-  if (deploymentsLoading || executionsLoading) {
+  // Format execution metrics for charts
+  const performanceData = executionMetrics?.totalExecutions?.map((item, index) => ({
+    timestamp: new Date(item.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    executions: item.count,
+    avgResponseTime: executionMetrics.avgResponseTime?.[index]?.time || 0,
+    memoryUsage: 0, // These would come from system metrics
+    cpuUsage: 0,
+  })) || [];
+
+  if (deploymentsLoading || executionsLoading || metricsLoading || executionMetricsLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
@@ -185,12 +140,12 @@ const DashboardPage: React.FC = () => {
         {/* Performance Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <PerformanceChart
-            data={mockPerformanceData}
+            data={performanceData}
             type="line"
             metric="executions"
           />
           <PerformanceChart
-            data={mockPerformanceData}
+            data={performanceData}
             type="area"
             metric="responseTime"
           />
