@@ -105,6 +105,7 @@ let AuthService = class AuthService {
                 lastName: lastName || '',
                 isActive: true,
                 subscriptionTier: 'FREE',
+                role: 'admin',
             },
             include: {
                 organizationMembers: {

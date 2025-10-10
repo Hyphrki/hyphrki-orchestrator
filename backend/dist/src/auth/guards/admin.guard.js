@@ -27,7 +27,7 @@ let AdminGuard = class AdminGuard extends jwt_auth_guard_1.JwtAuthGuard {
         if (!user) {
             throw new common_1.ForbiddenException('User not found in request');
         }
-        const hasAdminRole = user.organizations?.some((org) => org.role === 'admin');
+        const hasAdminRole = user.role === 'admin' || user.organizations?.some((org) => org.role === 'admin');
         if (!hasAdminRole) {
             throw new common_1.ForbiddenException('Admin access required');
         }
