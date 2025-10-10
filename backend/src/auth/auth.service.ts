@@ -50,7 +50,7 @@ export class AuthService {
       '7d',
     );
     return this.jwtService.sign(refreshPayload, {
-      expiresIn: refreshExpiresIn,
+      expiresIn: refreshExpiresIn as string,
     });
   }
 

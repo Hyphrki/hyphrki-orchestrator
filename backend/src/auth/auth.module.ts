@@ -21,7 +21,7 @@ export class AuthModule {
           useFactory: (configService: ConfigService) => ({
             secret: configService.get<string>('JWT_SECRET') || 'fallback-secret',
             signOptions: {
-              expiresIn: configService.get<string>('JWT_EXPIRES_IN', '1h'),
+              expiresIn: configService.get<string>('JWT_EXPIRES_IN', '1h') as string,
             },
           }),
           inject: [ConfigService],
