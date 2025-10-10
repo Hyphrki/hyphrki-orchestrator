@@ -1,0 +1,92 @@
+# OWASP ZAP Rules Configuration for Orchestrator Platform
+# Format: plugin_id\tname\tdescription\tenabled\talert_threshold\tattack_threshold
+#
+# Active Scan Rules - Authentication & Authorization
+40012	Cross Site Scripting (Reflected)\tReflected XSS attacks\tTRUE\tMEDIUM\tMEDIUM
+40014	Cross Site Scripting (Persistent)\tStored XSS attacks\tTRUE\tMEDIUM\tMEDIUM
+40016	Cross Site Scripting (Persistent - Prime)\tStored XSS via primed response\tTRUE\tMEDIUM\tMEDIUM
+40017	Cross Site Scripting (Persistent - Spider)\tStored XSS via spidering\tTRUE\tMEDIUM\tMEDIUM
+40018	SQL Injection\tSQL injection vulnerabilities\tTRUE\tHIGH\tHIGH
+40019	SQL Injection - MySQL\tMySQL specific SQL injection\tTRUE\tHIGH\tHIGH
+40020	SQL Injection - PostgreSQL\tPostgreSQL specific SQL injection\tTRUE\tHIGH\tHIGH
+40021	SQL Injection - Oracle\tOracle specific SQL injection\tTRUE\tHIGH\tHIGH
+40022	SQL Injection - SQLite\tSQLite specific SQL injection\tTRUE\tHIGH\tHIGH
+40024	SQL Injection - Hypersonic\tHypersonic specific SQL injection\tTRUE\tHIGH\tHIGH
+40026	Script Active Scan Rules\tActive scan rules for scripts\tTRUE\tMEDIUM\tMEDIUM
+40028	Parameter Tampering\tParameter tampering vulnerabilities\tTRUE\tMEDIUM\tMEDIUM
+40029	Server Side Include\tServer side include vulnerabilities\tTRUE\tHIGH\tHIGH
+40032	Path Traversal\tPath traversal vulnerabilities\tTRUE\tHIGH\tHIGH
+40034	Remote File Inclusion\tRemote file inclusion vulnerabilities\tTRUE\tHIGH\tHIGH
+40035	CRLF Injection\tCRLF injection vulnerabilities\tTRUE\tMEDIUM\tMEDIUM
+40038	Command Injection\tCommand injection vulnerabilities\tTRUE\tHIGH\tHIGH
+40040	External Redirect\tExternal redirect vulnerabilities\tTRUE\tMEDIUM\tMEDIUM
+40042	HTTP Parameter Pollution\tHTTP parameter pollution\tTRUE\tLOW\tLOW
+40045	Source Code Disclosure\tSource code disclosure vulnerabilities\tTRUE\tMEDIUM\tMEDIUM
+40047	Buffer Overflow\tBuffer overflow vulnerabilities\tTRUE\tHIGH\tHIGH
+40048	XST Attack\tCross Site Tracing attacks\tTRUE\tMEDIUM\tMEDIUM
+
+# Passive Scan Rules - Information Disclosure
+50001	Application Error Disclosure\tApplication error disclosure\tTRUE\tMEDIUM\tMEDIUM
+50002	Private IP Disclosure\tPrivate IP address disclosure\tTRUE\tMEDIUM\tMEDIUM
+50003	Session ID in URL Rewrite\tSession ID in URL rewrite\tTRUE\tMEDIUM\tMEDIUM
+50004	Viewstate\tASP.NET ViewState disclosure\tTRUE\tLOW\tLOW
+50005	Directory Browsing\tDirectory browsing enabled\tTRUE\tMEDIUM\tMEDIUM
+50006	Script Active Scan Rules (Passive)\tPassive scan rules for scripts\tTRUE\tMEDIUM\tMEDIUM
+50007	Weak Authentication\tWeak authentication mechanisms\tTRUE\tHIGH\tHIGH
+50008	Cross Domain Script Inclusion\tCross domain script inclusion\tTRUE\tLOW\tLOW
+50009	Backup File Disclosure\tBackup file disclosure\tTRUE\tMEDIUM\tMEDIUM
+50010	Web Browser XSS Protection Not Enabled\tXSS protection not enabled\tTRUE\tLOW\tLOW
+50011	X-Frame-Options Header Not Set\tMissing X-Frame-Options header\tTRUE\tMEDIUM\tMEDIUM
+50012	X-Content-Type-Options Header Missing\tMissing X-Content-Type-Options\tTRUE\tLOW\tLOW
+50013	Content Security Policy (CSP) Header Not Set\tMissing CSP header\tTRUE\tMEDIUM\tMEDIUM
+50014	HTTP Strict Transport Security (HSTS) Header Not Set\tMissing HSTS header\tTRUE\tMEDIUM\tMEDIUM
+50015	Content-Type Header Missing\tMissing Content-Type header\tTRUE\tLOW\tLOW
+50016	Cache Control\tImproper cache control\tTRUE\tLOW\tLOW
+50017	Cookie Without SameSite Attribute\tCookie without SameSite attribute\tTRUE\tLOW\tLOW
+50018	Cookie Without Secure Flag\tCookie without secure flag\tTRUE\tMEDIUM\tMEDIUM
+50019	Cookie Without HttpOnly Flag\tCookie without HttpOnly flag\tTRUE\tMEDIUM\tMEDIUM
+50020	Weak Authentication Method\tWeak authentication method\tTRUE\tHIGH\tHIGH
+
+# Authentication & Session Management
+90001	HTTP Authentication\tHTTP authentication mechanisms\tTRUE\tMEDIUM\tMEDIUM
+90011	LDAP Injection\tLDAP injection vulnerabilities\tTRUE\tHIGH\tHIGH
+90019	Charset Mismatch\tCharset mismatch issues\tTRUE\tLOW\tLOW
+90020	Heartbleed OpenSSL Vulnerability\tHeartbleed vulnerability\tTRUE\tHIGH\tHIGH
+90021	Compression Oracle\tCompression oracle attacks\tTRUE\tMEDIUM\tMEDIUM
+90022	Application Error Disclosure\tApplication error disclosure\tTRUE\tMEDIUM\tMEDIUM
+90023	XPath Injection\tXPath injection vulnerabilities\tTRUE\tHIGH\tHIGH
+90024	XML External Entity Attack\tXXE vulnerabilities\tTRUE\tHIGH\tHIGH
+90025	Generic Padding Oracle\tPadding oracle attacks\tTRUE\tHIGH\tHIGH
+90026	Slow HTTP Denial of Service\tSlow HTTP DoS\tTRUE\tMEDIUM\tMEDIUM
+90027	Internal IP Disclosure\tInternal IP address disclosure\tTRUE\tMEDIUM\tMEDIUM
+90028	HTTP Parameter Pollution\tHTTP parameter pollution\tTRUE\tLOW\tLOW
+90029	SOAP XML Injection\tSOAP XML injection\tTRUE\tHIGH\tHIGH
+90030	WSDL File Passive Scanner\tWSDL file analysis\tTRUE\tMEDIUM\tMEDIUM
+90033	Loosely Scoped Cookie\tLoosely scoped cookies\tTRUE\tLOW\tLOW
+90034	Cloud Metadata Potentially Exposed\tCloud metadata exposure\tTRUE\tMEDIUM\tMEDIUM
+
+# API Security Rules
+100001	API Info Leak\tAPI information leakage\tTRUE\tMEDIUM\tMEDIUM
+100002	API Error Leak\tAPI error information leakage\tTRUE\tMEDIUM\tMEDIUM
+100003	API Mass Assignment\tMass assignment vulnerabilities\tTRUE\tMEDIUM\tMEDIUM
+100004	API NoSQL Injection\tNoSQL injection vulnerabilities\tTRUE\tHIGH\tHIGH
+100005	API JWT Weak Secrets\tWeak JWT secrets\tTRUE\tHIGH\tHIGH
+100006	API JWT None Algorithm\tJWT none algorithm usage\tTRUE\tHIGH\tHIGH
+100007	API Sensitive Data Exposure\tSensitive data in API responses\tTRUE\tHIGH\tHIGH
+100008	API Rate Limiting\tMissing rate limiting\tTRUE\tMEDIUM\tMEDIUM
+100009	API IDOR\tInsecure Direct Object References\tTRUE\tHIGH\tHIGH
+100010	API Broken Function Level Authorization\tBroken function level authorization\tTRUE\tHIGH\tHIGH
+100011	API Broken Object Level Authorization\tBroken object level authorization\tTRUE\tHIGH\tHIGH
+100012	API Excessive Data Exposure\tExcessive data exposure\tTRUE\tMEDIUM\tMEDIUM
+100013	API Lack of Resources & Rate Limiting\tMissing resource and rate limiting\tTRUE\tMEDIUM\tMEDIUM
+100014	API Mass Assignment\tMass assignment in APIs\tTRUE\tMEDIUM\tMEDIUM
+100015	API Insecure Direct Object References\tInsecure direct object references\tTRUE\tHIGH\tHIGH
+100016	API Security Misconfiguration\tAPI security misconfigurations\tTRUE\tMEDIUM\tMEDIUM
+100017	API Improper Assets Management\tImproper asset management\tTRUE\tMEDIUM\tMEDIUM
+100018	API Insufficient Logging & Monitoring\tInsufficient logging and monitoring\tTRUE\tLOW\tLOW
+
+# Framework-specific rules for NestJS
+110001	NestJS Error Disclosure\tNestJS error disclosure\tTRUE\tMEDIUM\tMEDIUM
+110002	NestJS Validation Bypass\tNestJS validation bypass\tTRUE\tHIGH\tHIGH
+110003	NestJS Guard Bypass\tNestJS guard bypass\tTRUE\tHIGH\tHIGH
+110004	NestJS Pipe Bypass\tNestJS pipe bypass\tTRUE\tMEDIUM\tMEDIUM

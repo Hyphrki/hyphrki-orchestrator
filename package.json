@@ -1,0 +1,47 @@
+{
+  "name": "orchestrator-platform",
+  "version": "1.0.0",
+  "description": "Multi-tenant AI agent orchestration platform",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm run test",
+    "test:frontend": "cd frontend && npm run test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "security:scan": "npm run security:snyk && npm run security:audit",
+    "security:snyk": "cd backend && npx snyk test --severity-threshold=high && cd ../frontend && npx snyk test --severity-threshold=high",
+    "security:audit": "cd backend && npm audit --audit-level=high && cd ../frontend && npm audit --audit-level=high",
+    "security:container": "docker run --rm -v $(pwd):/src aquasecurity/trivy config --format table --output trivy-results.txt .",
+    "security:full": "npm run security:scan && npm run security:container",
+    "security:docker": "docker-compose -f docker-compose.security.yml up --build --abort-on-container-exit",
+    "security:zap": "docker run --rm -v $(pwd):/zap/wrk:rw -t owasp/zap2docker-stable zap-baseline.py -t http://localhost:3000 -r zap-report.html"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/orchestrator.git"
+  },
+  "author": "Orchestrator Team",
+  "license": "MIT"
+}

@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gpu-scheduler-config
+  namespace: orchestrator-frameworks
+data:
+  config.yaml: |
+    apiVersion: kubescheduler.config.k8s.io/v1beta3
+    kind: KubeSchedulerConfiguration
+    profiles:
+    - schedulerName: gpu-scheduler
+      plugins:
+        score:
+          enabled:
+          - name: NodeResourcesFit
+          - name: ImageLocality
+          - name: TaintToleration
+          disabled:
+          - name: NodeResourcesBalancedAllocation
+        filter:
+          enabled:
+          - name: NodeUnschedulable
+          - name: NodeResourcesFit
+          - name: TaintToleration
+      pluginConfig:
+      - name: NodeResourcesFit
+        args:
+          scoringStrategy:
+            type: MostAllocated
+            resources:
+            - name: cpu
+              weight: 1
+            - name: memory
+              weight: 1
+            - name: nvidia.com/gpu
+              weight: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpu-scheduler
+  namespace: orchestrator-frameworks
+  labels:
+    component: scheduler
+    scheduler: gpu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: scheduler
+      scheduler: gpu
+  template:
+    metadata:
+      labels:
+        component: scheduler
+        scheduler: gpu
+    spec:
+      serviceAccountName: gpu-scheduler-sa
+      containers:
+      - name: kube-scheduler
+        image: registry.k8s.io/kube-scheduler:v1.28.0
+        command:
+        - kube-scheduler
+        - --config=/etc/kubernetes/scheduler-config.yaml
+        - --v=3
+        volumeMounts:
+        - name: config
+          mountPath: /etc/kubernetes
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+      volumes:
+      - name: config
+        configMap:
+          name: gpu-scheduler-config
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gpu-scheduler-sa
+  namespace: orchestrator-frameworks
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gpu-scheduler-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "nodes", "persistentvolumes", "persistentvolumeclaims", "services", "endpoints"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["apps"]
+  resources: ["replicasets", "statefulsets", "deployments"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["events.k8s.io"]
+  resources: ["events"]
+  verbs: ["create", "update", "patch"]
+- apiGroups: ["scheduling.k8s.io"]
+  resources: ["priorityclasses"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gpu-scheduler-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gpu-scheduler-role
+subjects:
+- kind: ServiceAccount
+  name: gpu-scheduler-sa
+  namespace: orchestrator-frameworks

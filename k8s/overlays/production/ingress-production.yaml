@@ -1,0 +1,59 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orchestrator-ingress
+  annotations:
+    # SSL/TLS Configuration
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-min-version: "TLSv1.2"
+
+    # Rate Limiting & Security
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+
+    # CORS Configuration
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://orchestrator.example.com"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,Accept,Origin,Referer,Accept-Encoding,Accept-Language"
+
+    # Monitoring & Metrics
+    nginx.ingress.kubernetes.io/prometheus.io/scrape: "true"
+    nginx.ingress.kubernetes.io/prometheus.io/port: "10254"
+    nginx.ingress.kubernetes.io/prometheus.io/path: "/metrics"
+
+    # Load Balancing
+    nginx.ingress.kubernetes.io/load-balance: "least_conn"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - orchestrator.example.com
+    - api.orchestrator.example.com
+    secretName: orchestrator-tls-prod
+  rules:
+  - host: api.orchestrator.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: orchestrator-backend
+            port:
+              number: 80
+  - host: orchestrator.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: orchestrator-frontend
+            port:
+              number: 80

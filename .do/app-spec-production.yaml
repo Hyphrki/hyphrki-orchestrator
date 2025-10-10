@@ -1,0 +1,110 @@
+name: orchestrator-production
+services:
+- name: backend
+  source_dir: backend
+  github:
+    repo: your-org/orchestrator
+    branch: main
+    deploy_on_push: false  # Manual deployments only for production
+  run_command: npm run start:prod
+  environment_slug: node-js
+  instance_count: 2
+  instance_size_slug: basic-xs
+  envs:
+  - key: NODE_ENV
+    value: production
+  - key: PORT
+    value: "8080"
+  - key: DATABASE_URL
+    type: SECRET
+    value: ${DATABASE_URL_PRODUCTION}
+  - key: REDIS_URL
+    value: ${REDIS_URL_PRODUCTION}
+  - key: JWT_SECRET
+    type: SECRET
+    value: ${JWT_SECRET_PRODUCTION}
+  - key: JWT_EXPIRATION
+    value: "3600s"
+  - key: JWT_REFRESH_EXPIRATION
+    value: "7d"
+  - key: AUTH0_DOMAIN
+    value: ${AUTH0_DOMAIN_PRODUCTION}
+  - key: AUTH0_CLIENT_ID
+    value: ${AUTH0_CLIENT_ID_PRODUCTION}
+  - key: AUTH0_CLIENT_SECRET
+    type: SECRET
+    value: ${AUTH0_CLIENT_SECRET_PRODUCTION}
+  - key: AUTH0_AUDIENCE
+    value: ${AUTH0_AUDIENCE_PRODUCTION}
+  - key: HYPHRKI_WS_URL
+    value: ${HYPHRKI_WS_URL_PRODUCTION}
+  - key: HYPHRKI_API_URL
+    value: ${HYPHRKI_API_URL_PRODUCTION}
+  - key: ENCRYPTION_KEY
+    type: SECRET
+    value: ${ENCRYPTION_KEY_PRODUCTION}
+  - key: LOG_LEVEL
+    value: info
+  - key: LOG_FORMAT
+    value: json
+  health_check:
+    http_path: /health
+  routes:
+  - path: /api
+static_sites:
+- name: frontend
+  source_dir: frontend
+  github:
+    repo: your-org/orchestrator
+    branch: main
+    deploy_on_push: false  # Manual deployments only for production
+  build_command: npm run build
+  output_dir: dist
+  envs:
+  - key: VITE_API_URL
+    value: ${VITE_API_URL_PRODUCTION}
+  - key: VITE_WS_URL
+    value: ${VITE_WS_URL_PRODUCTION}
+  - key: VITE_AUTH0_DOMAIN
+    value: ${AUTH0_DOMAIN_PRODUCTION}
+  - key: VITE_AUTH0_CLIENT_ID
+    value: ${AUTH0_CLIENT_ID_PRODUCTION}
+  - key: VITE_AUTH0_AUDIENCE
+    value: ${AUTH0_AUDIENCE_PRODUCTION}
+  routes:
+  - path: /
+region: nyc1
+envs:
+- key: DATABASE_URL_PRODUCTION
+  type: SECRET
+  value: ${DATABASE_URL_PRODUCTION}
+- key: REDIS_URL_PRODUCTION
+  value: ${REDIS_URL_PRODUCTION}
+- key: JWT_SECRET_PRODUCTION
+  type: SECRET
+  value: ${JWT_SECRET_PRODUCTION}
+- key: AUTH0_DOMAIN_PRODUCTION
+  value: ${AUTH0_DOMAIN_PRODUCTION}
+- key: AUTH0_CLIENT_ID_PRODUCTION
+  value: ${AUTH0_CLIENT_ID_PRODUCTION}
+- key: AUTH0_CLIENT_SECRET_PRODUCTION
+  type: SECRET
+  value: ${AUTH0_CLIENT_SECRET_PRODUCTION}
+- key: AUTH0_AUDIENCE_PRODUCTION
+  value: ${AUTH0_AUDIENCE_PRODUCTION}
+- key: HYPHRKI_WS_URL_PRODUCTION
+  value: ${HYPHRKI_WS_URL_PRODUCTION}
+- key: HYPHRKI_API_URL_PRODUCTION
+  value: ${HYPHRKI_API_URL_PRODUCTION}
+- key: ENCRYPTION_KEY_PRODUCTION
+  type: SECRET
+  value: ${ENCRYPTION_KEY_PRODUCTION}
+- key: VITE_API_URL_PRODUCTION
+  value: ${VITE_API_URL_PRODUCTION}
+- key: VITE_WS_URL_PRODUCTION
+  value: ${VITE_WS_URL_PRODUCTION}
+domains:
+- domain: app.orchestrator.com
+  type: PRIMARY
+  wildcard: false
+  zone: orchestrator.com

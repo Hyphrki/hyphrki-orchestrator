@@ -1,0 +1,11 @@
+# CrewAI Multi-Agent Runtime Dependencies
+crewai>=0.1.0
+langchain>=0.1.0
+langchain-openai>=0.1.0
+langchain-anthropic>=0.1.0
+pydantic>=2.0.0
+fastapi>=0.100.0
+uvicorn>=0.23.0
+redis>=4.6.0
+python-multipart>=0.0.6
+aiofiles>=23.0.0

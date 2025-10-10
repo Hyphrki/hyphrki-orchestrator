@@ -1,0 +1,151 @@
+groups:
+  - name: orchestrator-alerts
+    rules:
+      # Application Health Alerts
+      - alert: OrchestratorBackendDown
+        expr: up{job="orchestrator-backend"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "Orchestrator backend is down"
+          description: "Orchestrator backend has been down for more than 5 minutes"
+          runbook_url: "https://github.com/hyphrki/orchestrator/runbooks/backend-down.md"
+
+      - alert: OrchestratorFrontendDown
+        expr: up{job="orchestrator-frontend"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: frontend
+        annotations:
+          summary: "Orchestrator frontend is down"
+          description: "Orchestrator frontend has been down for more than 5 minutes"
+
+      # Performance Alerts
+      - alert: HighErrorRate
+        expr: rate(orchestrator_http_requests_total{status_code=~"5.."}[5m]) / rate(orchestrator_http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: backend
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | printf \"%.2f\" }}% over the last 5 minutes"
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(orchestrator_http_request_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: backend
+        annotations:
+          summary: "High latency detected"
+          description: "95th percentile latency is {{ $value | printf \"%.2f\" }}s over the last 5 minutes"
+
+      # Resource Alerts
+      - alert: HighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total{pod=~"orchestrator-.*"}[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          service: kubernetes
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is above 80% for pod {{ $labels.pod }}"
+
+      - alert: HighMemoryUsage
+        expr: container_memory_usage_bytes{pod=~"orchestrator-.*"} / container_spec_memory_limit_bytes > 0.9
+        for: 10m
+        labels:
+          severity: warning
+          service: kubernetes
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is above 90% for pod {{ $labels.pod }}"
+
+      # Framework Runtime Alerts
+      - alert: FrameworkRuntimeDown
+        expr: up{job=~"langgraph-runtime|agno-runtime|crewai-runtime|n8n-runtime"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          service: framework
+        annotations:
+          summary: "Framework runtime is down"
+          description: "{{ $labels.job }} runtime has been down for more than 5 minutes"
+
+      # Database Alerts
+      - alert: DatabaseConnectionHigh
+        expr: rate(postgres_backends_active[5m]) > 50
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "High database connections"
+          description: "Database has {{ $value | printf \"%.0f\" }} active connections"
+
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "Database is down"
+          description: "PostgreSQL database has been down for more than 5 minutes"
+
+      # Redis Alerts
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: cache
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache has been down for more than 5 minutes"
+
+      # GPU Utilization Alerts
+      - alert: GPUUtilizationLow
+        expr: DCGM_FI_DEV_GPU_UTIL < 10
+        for: 30m
+        labels:
+          severity: info
+          service: gpu
+        annotations:
+          summary: "Low GPU utilization"
+          description: "GPU {{ $labels.gpu }} utilization is below 10%"
+
+      - alert: GPUUtilizationHigh
+        expr: DCGM_FI_DEV_GPU_UTIL > 95
+        for: 10m
+        labels:
+          severity: warning
+          service: gpu
+        annotations:
+          summary: "High GPU utilization"
+          description: "GPU {{ $labels.gpu }} utilization is above 95%"
+
+      # Security Alerts
+      - alert: UnusualTrafficPattern
+        expr: rate(orchestrator_http_requests_total[1h]) > rate(orchestrator_http_requests_total[24h])/24 * 2
+        for: 15m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "Unusual traffic pattern detected"
+          description: "Traffic rate has doubled compared to 24h average"
+
+      - alert: FailedLoginAttempts
+        expr: rate(orchestrator_auth_failed_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "High failed login attempts"
+          description: "More than 10 failed login attempts in 5 minutes"

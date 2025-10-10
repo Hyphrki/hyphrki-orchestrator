@@ -1,0 +1,152 @@
+# Security Scanning Environment
+# Provides containerized security testing tools
+
+version: '3.8'
+
+services:
+  # SonarQube for SAST
+  sonarqube:
+    image: sonarqube:community
+    container_name: orchestrator-sonarqube
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      - SONAR_WEB_JAVAOPTS=-Xmx512m -Xms128m -XX:+HeapDumpOnOutOfMemoryError
+      - SONAR_CE_JAVAOPTS=-Xmx512m -Xms128m -XX:+HeapDumpOnOutOfMemoryError
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - security
+
+  # OWASP ZAP for DAST
+  owasp-zap:
+    image: owasp/zap2docker-stable:latest
+    container_name: orchestrator-zap
+    command: zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+    environment:
+      - ZAP_AUTO_UPDATE=true
+    volumes:
+      - zap_work:/zap/wrk
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+    networks:
+      - security
+
+  # Snyk CLI for dependency scanning
+  snyk-cli:
+    image: snyk/snyk:node
+    container_name: orchestrator-snyk
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /tmp
+    environment:
+      - SNYK_TOKEN=${SNYK_TOKEN}
+    command: >
+      sh -c "
+        echo 'Scanning backend dependencies...' &&
+        cd backend && snyk test --json --severity-threshold=high > /tmp/snyk-backend.json &&
+        echo 'Scanning frontend dependencies...' &&
+        cd ../frontend && snyk test --json --severity-threshold=high > /tmp/snyk-frontend.json &&
+        echo 'Snyk scans completed'
+      "
+    networks:
+      - security
+
+  # Trivy for container scanning
+  trivy:
+    image: aquasecurity/trivy:latest
+    container_name: orchestrator-trivy
+    volumes:
+      - .:/app
+      - trivy_cache:/root/.cache/trivy
+    command: >
+      sh -c "
+        echo 'Scanning backend Dockerfile...' &&
+        trivy config --format table --output /tmp/trivy-backend.txt /app/backend &&
+        echo 'Scanning frontend Dockerfile...' &&
+        trivy config --format table --output /tmp/trivy-frontend.txt /app/frontend &&
+        echo 'Scanning docker-compose.yml...' &&
+        trivy config --format table --output /tmp/trivy-compose.txt /app/docker-compose.yml &&
+        echo 'Trivy scans completed'
+      "
+    networks:
+      - security
+
+  # Security testing database
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: orchestrator-postgres-test
+    environment:
+      - POSTGRES_DB=orchestrator_test
+      - POSTGRES_USER=orchestrator
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-orchestrator123}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    networks:
+      - security
+
+  # Application under test
+  app-under-test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: orchestrator-app-test
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgresql://orchestrator:orchestrator123@postgres-test:5432/orchestrator_test
+      - JWT_SECRET=${JWT_SECRET:-test-jwt-secret-key-for-testing-only}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+    ports:
+      - "3001:3000"
+    depends_on:
+      - postgres-test
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - security
+    command: npm run start:prod
+
+  # ZAP automated scan
+  zap-baseline-scan:
+    image: owasp/zap2docker-stable:latest
+    container_name: orchestrator-zap-baseline
+    depends_on:
+      - app-under-test
+    environment:
+      - ZAP_AUTO_UPDATE=true
+    volumes:
+      - zap_baseline_work:/zap/wrk
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+    command: >
+      sh -c "
+        echo 'Waiting for application to be ready...' &&
+        timeout 300 bash -c 'until curl -f http://app-under-test:3000/health; do sleep 5; done' &&
+        echo 'Application is ready, starting ZAP baseline scan...' &&
+        zap-baseline.py -t http://app-under-test:3000 -r zap-baseline-report.html -x zap-baseline-report.xml -J zap-baseline-report.json --auto
+      "
+    networks:
+      - security
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  zap_work:
+  zap_baseline_work:
+  postgres_test_data:
+  trivy_cache:
+
+networks:
+  security:
+    driver: bridge

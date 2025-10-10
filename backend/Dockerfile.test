@@ -1,0 +1,31 @@
+FROM node:slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies and security updates for native modules
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    postgresql-client \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies for testing)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Expose port for tests
+EXPOSE 3001
+
+# Default command for testing
+CMD ["npm", "run", "test"]

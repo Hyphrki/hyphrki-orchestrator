@@ -1,0 +1,163 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: orchestrator-postgres
+    environment:
+      POSTGRES_DB: orchestrator
+      POSTGRES_USER: orchestrator
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_production}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orchestrator -d orchestrator"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - orchestrator-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: orchestrator-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - orchestrator-network
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: orchestrator-n8n
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-changeme}
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=${N8N_WEBHOOK_URL:-http://localhost:5678}
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5678/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - orchestrator-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: orchestrator-backend
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://orchestrator:${POSTGRES_PASSWORD:-changeme_production}@postgres:5432/orchestrator
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET:-15d76857ce1b96792851f0605550831c942a5f948e96c5a9484fcd0714398dc2d7e9bdb4e2f91d90446771882342634e399b4e5887d5d3ec64b94d5a0a8d33bb}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-c1912be27c9a1a4d2c159aa5e96dc7be25feda934ded0850338c0d41b2ee45fe761283f0c85b869fd6d9ee0d3c65a1e395461a7902a2f54492fafd47173a6b4d}
+      - JWT_EXPIRES_IN=1h
+      - JWT_REFRESH_EXPIRES_IN=7d
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-b075dbb406a432496dc9a7055f38099678efa2b263107e457cf0010e67d387a376374ea32eed0f329b87cdad0d2de5f670ab9594b118471e1de2b8f98ab86d10}
+      - PORT=3001
+      - N8N_API_URL=http://n8n:5678
+      - N8N_API_KEY=${N8N_API_KEY:-}
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      n8n:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - orchestrator-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: orchestrator-frontend
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:3001}
+      - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:3001}
+    ports:
+      - "5173:5173"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:5173/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - orchestrator-network
+
+  user-portal:
+    build:
+      context: ../user_portal
+      dockerfile: Dockerfile
+    container_name: user-portal
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://backend:3001
+      - BACKEND_API_URL=http://backend:3001
+      - DATABASE_URL=postgresql://orchestrator:${POSTGRES_PASSWORD:-changeme_production}@postgres:5432/orchestrator
+      - JWT_SECRET=${JWT_SECRET:-15d76857ce1b96792851f0605550831c942a5f948e96c5a9484fcd0714398dc2d7e9bdb4e2f91d90446771882342634e399b4e5887d5d3ec64b94d5a0a8d33bb}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-c1912be27c9a1a4d2c159aa5e96dc7be25feda934ded0850338c0d41b2ee45fe761283f0c85b869fd6d9ee0d3c65a1e395461a7902a2f54492fafd47173a6b4d}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-c3e2924e3f467791bcf723eff82beab240b183b8768c854aed4b89a725c4813c1f997100c087a82b7aaaa8e51899cf05d8a09a25ac1547e835d5eaf0150d118e}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-154467056827-qar472alglin655bq49rq74vvtorg237.apps.googleusercontent.com}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-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}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - orchestrator-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  n8n_data:
+    driver: local
+
+networks:
+  orchestrator-network:
+    driver: bridge

@@ -1,0 +1,15 @@
+# Agno High-Performance Runtime Dependencies
+agno>=0.1.0
+torch>=2.0.0
+transformers>=4.30.0
+accelerate>=0.20.0
+faiss-cpu>=1.7.0
+sentence-transformers>=2.2.0
+pydantic>=2.0.0
+fastapi>=0.100.0
+uvicorn>=0.23.0
+redis>=4.6.0
+aiofiles>=23.0.0
+numpy>=1.24.0
+pillow>=10.0.0
+opencv-python>=4.8.0

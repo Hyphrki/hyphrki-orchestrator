@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orchestrator-backend
+  labels:
+    app: orchestrator-backend
+    component: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orchestrator-backend
+  template:
+    metadata:
+      labels:
+        app: orchestrator-backend
+        component: backend
+    spec:
+      containers:
+      - name: orchestrator-backend
+        image: orchestrator/backend:latest
+        ports:
+        - containerPort: 3001
+          name: http
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3001"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: orchestrator-secrets
+              key: database-url
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: orchestrator-secrets
+              key: jwt-secret
+        - name: ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: orchestrator-secrets
+              key: encryption-key
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: orchestrator-secrets
+              key: redis-url
+        - name: ENABLE_TRACING
+          value: "true"
+        - name: JAEGER_ENDPOINT
+          value: "http://jaeger-collector:14268/api/traces"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: logs
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orchestrator-backend
+  labels:
+    app: orchestrator-backend
+    component: backend
+spec:
+  selector:
+    app: orchestrator-backend
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  type: ClusterIP

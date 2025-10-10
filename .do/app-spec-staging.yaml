@@ -1,0 +1,105 @@
+name: orchestrator-staging
+services:
+- name: backend
+  source_dir: backend
+  github:
+    repo: your-org/orchestrator
+    branch: main
+    deploy_on_push: true
+  run_command: npm run start:prod
+  environment_slug: node-js
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  envs:
+  - key: NODE_ENV
+    value: staging
+  - key: PORT
+    value: "8080"
+  - key: DATABASE_URL
+    type: SECRET
+    value: ${DATABASE_URL_STAGING}
+  - key: REDIS_URL
+    value: ${REDIS_URL_STAGING}
+  - key: JWT_SECRET
+    type: SECRET
+    value: ${JWT_SECRET_STAGING}
+  - key: JWT_EXPIRATION
+    value: "3600s"
+  - key: JWT_REFRESH_EXPIRATION
+    value: "7d"
+  - key: AUTH0_DOMAIN
+    value: ${AUTH0_DOMAIN_STAGING}
+  - key: AUTH0_CLIENT_ID
+    value: ${AUTH0_CLIENT_ID_STAGING}
+  - key: AUTH0_CLIENT_SECRET
+    type: SECRET
+    value: ${AUTH0_CLIENT_SECRET_STAGING}
+  - key: AUTH0_AUDIENCE
+    value: ${AUTH0_AUDIENCE_STAGING}
+  - key: HYPHRKI_WS_URL
+    value: ${HYPHRKI_WS_URL_STAGING}
+  - key: HYPHRKI_API_URL
+    value: ${HYPHRKI_API_URL_STAGING}
+  - key: ENCRYPTION_KEY
+    type: SECRET
+    value: ${ENCRYPTION_KEY_STAGING}
+  - key: LOG_LEVEL
+    value: info
+  - key: LOG_FORMAT
+    value: json
+  health_check:
+    http_path: /health
+  routes:
+  - path: /api
+static_sites:
+- name: frontend
+  source_dir: frontend
+  github:
+    repo: your-org/orchestrator
+    branch: main
+    deploy_on_push: true
+  build_command: npm run build
+  output_dir: dist
+  envs:
+  - key: VITE_API_URL
+    value: ${VITE_API_URL_STAGING}
+  - key: VITE_WS_URL
+    value: ${VITE_WS_URL_STAGING}
+  - key: VITE_AUTH0_DOMAIN
+    value: ${AUTH0_DOMAIN_STAGING}
+  - key: VITE_AUTH0_CLIENT_ID
+    value: ${AUTH0_CLIENT_ID_STAGING}
+  - key: VITE_AUTH0_AUDIENCE
+    value: ${AUTH0_AUDIENCE_STAGING}
+  routes:
+  - path: /
+region: nyc1
+envs:
+- key: DATABASE_URL_STAGING
+  type: SECRET
+  value: ${DATABASE_URL_STAGING}
+- key: REDIS_URL_STAGING
+  value: ${REDIS_URL_STAGING}
+- key: JWT_SECRET_STAGING
+  type: SECRET
+  value: ${JWT_SECRET_STAGING}
+- key: AUTH0_DOMAIN_STAGING
+  value: ${AUTH0_DOMAIN_STAGING}
+- key: AUTH0_CLIENT_ID_STAGING
+  value: ${AUTH0_CLIENT_ID_STAGING}
+- key: AUTH0_CLIENT_SECRET_STAGING
+  type: SECRET
+  value: ${AUTH0_CLIENT_SECRET_STAGING}
+- key: AUTH0_AUDIENCE_STAGING
+  value: ${AUTH0_AUDIENCE_STAGING}
+- key: HYPHRKI_WS_URL_STAGING
+  value: ${HYPHRKI_WS_URL_STAGING}
+- key: HYPHRKI_API_URL_STAGING
+  value: ${HYPHRKI_API_URL_STAGING}
+- key: ENCRYPTION_KEY_STAGING
+  type: SECRET
+  value: ${ENCRYPTION_KEY_STAGING}
+- key: VITE_API_URL_STAGING
+  value: ${VITE_API_URL_STAGING}
+- key: VITE_WS_URL_STAGING
+  value: ${VITE_WS_URL_STAGING}

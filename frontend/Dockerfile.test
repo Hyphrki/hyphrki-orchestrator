@@ -1,0 +1,19 @@
+FROM node:slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies for testing)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Expose port for development server
+EXPOSE 5173
+
+# Default command for testing
+CMD ["npm", "run", "test"]

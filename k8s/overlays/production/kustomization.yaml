@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+bases:
+  - ../../base
+
+patchesStrategicMerge:
+  - backend-replicas.yaml
+  - ingress-production.yaml
+
+images:
+  - name: orchestrator/backend
+    newTag: v1.0.0
+  - name: orchestrator/langgraph-runtime
+    newTag: v1.0.0
+  - name: orchestrator/agno-runtime
+    newTag: v1.0.0
+  - name: orchestrator/crewai-runtime
+    newTag: v1.0.0
+  - name: orchestrator/n8n-runtime
+    newTag: v1.0.0
+
+configMapGenerator:
+  - name: orchestrator-config
+    behavior: replace
+    literals:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      - ENABLE_TRACING=true
+      - ENABLE_METRICS=true
+      - FRONTEND_URL=https://orchestrator.example.com
+      - API_URL=https://api.orchestrator.example.com

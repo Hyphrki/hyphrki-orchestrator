@@ -1,0 +1,53 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespaces.yaml
+  - secrets.yaml
+  - database.yaml
+  - redis.yaml
+  - orchestrator-backend.yaml
+  - langgraph-runtime.yaml
+  - agno-runtime.yaml
+  - crewai-runtime.yaml
+  - n8n-runtime.yaml
+  - ingress.yaml
+  - monitoring.yaml
+  - resource-quotas.yaml
+  - gpu-scheduler.yaml
+
+commonLabels:
+  app.kubernetes.io/name: orchestrator
+  app.kubernetes.io/version: v1.0.0
+  app.kubernetes.io/managed-by: kustomize
+
+images:
+  - name: orchestrator/backend
+    newTag: latest
+  - name: orchestrator/langgraph-runtime
+    newTag: latest
+  - name: orchestrator/agno-runtime
+    newTag: latest
+  - name: orchestrator/crewai-runtime
+    newTag: latest
+  - name: orchestrator/n8n-runtime
+    newTag: latest
+
+configMapGenerator:
+  - name: orchestrator-config
+    literals:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      - ENABLE_TRACING=true
+      - ENABLE_METRICS=true
+
+secretGenerator:
+  - name: orchestrator-secrets
+    literals:
+      - jwt-secret=production-jwt-secret-key-change-in-production-123456789
+      - encryption-key=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      - postgres-db=orchestrator_prod
+      - postgres-user=orchestrator
+      - postgres-password=password
+      - redis-url=redis://redis:6379
+      - database-url=postgresql://orchestrator:password@postgres:5432/orchestrator_prod

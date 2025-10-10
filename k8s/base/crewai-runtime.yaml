@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crewai-runtime
+  labels:
+    app: crewai-runtime
+    component: framework-runtime
+    framework: crewai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: crewai-runtime
+  template:
+    metadata:
+      labels:
+        app: crewai-runtime
+        component: framework-runtime
+        framework: crewai
+    spec:
+      containers:
+      - name: crewai-runtime
+        image: orchestrator/crewai-runtime:latest
+        ports:
+        - containerPort: 8003
+          name: http
+        env:
+        - name: CREWAI_RUNTIME_PORT
+          value: "8003"
+        - name: CREWAI_RUNTIME_HOST
+          value: "0.0.0.0"
+        - name: OTEL_SERVICE_NAME
+          value: "crewai-runtime"
+        - name: OTEL_TRACES_EXPORTER
+          value: "jaeger"
+        - name: OTEL_EXPORTER_JAEGER_ENDPOINT
+          value: "http://jaeger-collector:14268/api/traces"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        volumeMounts:
+        - name: cache
+          mountPath: /tmp/cache
+      volumes:
+      - name: cache
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: crewai-runtime
+  labels:
+    app: crewai-runtime
+    component: framework-runtime
+    framework: crewai
+spec:
+  selector:
+    app: crewai-runtime
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  type: ClusterIP

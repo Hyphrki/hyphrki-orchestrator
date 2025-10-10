@@ -1,0 +1,409 @@
+// Orchestrator Platform Database Schema
+// Multi-tenant AI agent orchestration platform
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Management Models
+model User {
+  id              String   @id @default(uuid()) @db.Uuid
+  email           String   @unique @db.VarChar(255)
+  passwordHash    String   @db.VarChar(255)
+  firstName       String   @db.VarChar(100)
+  lastName        String   @db.VarChar(100)
+  subscriptionTier String  @default("basic") @db.VarChar(20)
+  role            String   @default("user") @db.VarChar(20) // 'user' | 'admin'
+  suspendedAt     DateTime? @db.Timestamp(6)
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  lastLoginAt     DateTime? @db.Timestamp(6)
+  isActive        Boolean  @default(true)
+  emailVerified   Boolean  @default(false)
+
+  // Relations
+  organizationMembers OrganizationMember[]
+  agents              Agent[] @relation("UserAgents")
+  agentTemplates      AgentTemplate[] @relation("AgentTemplateCreator")
+  deployments         UserAgentDeployment[] @relation("UserDeployments")
+  executions          AgentExecution[] @relation("UserExecutions")
+  activities          UserActivity[]
+  assignedWorkflows   Workflow[] @relation("AssignedWorkflows")
+  assignedAgents      UserAssignedAgent[] @relation("UserAssignedAgents")
+
+  @@map("users")
+}
+
+model Organization {
+  id              String   @id @default(uuid()) @db.Uuid
+  name            String   @db.VarChar(255)
+  slug            String   @unique @db.VarChar(100)
+  subscriptionTier String  @default("basic") @db.VarChar(20)
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  isActive        Boolean  @default(true)
+
+  // Relations
+  members OrganizationMember[]
+  agents  Agent[] @relation("OrganizationAgents")
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String     @id @default(uuid()) @db.Uuid
+  organizationId String     @db.Uuid
+  userId         String     @db.Uuid
+  role           String     @default("member") @db.VarChar(20)
+  joinedAt       DateTime   @default(now()) @db.Timestamp(6)
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@map("organization_members")
+}
+
+// User Activity Tracking
+model UserActivity {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  action    String   @db.VarChar(100) // 'profile_updated', 'user_suspended', 'role_changed', 'workflow_assigned'
+  metadata  Json?    @db.JsonB
+  timestamp DateTime @default(now()) @db.Timestamp(6)
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, timestamp])
+  @@map("user_activities")
+}
+
+// Agent Management Models
+model Agent {
+  id              String   @id @default(uuid()) @db.Uuid
+  name            String   @db.VarChar(255)
+  description     String?  @db.Text
+  ownerType       String   @db.VarChar(20) // 'user' | 'organization'
+  ownerId         String   @db.Uuid
+  framework       String   @db.VarChar(50) // 'langgraph' | 'agno' | 'crewai' | 'n8n'
+  agentType       String   @db.VarChar(20) // 'visual' | 'code'
+  status          String   @default("draft") @db.VarChar(20)
+  version         String   @default("1.0.0") @db.VarChar(20)
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  deployedAt      DateTime? @db.Timestamp(6)
+  containerId     String?  @db.VarChar(255)
+  resourceLimits  Json?
+  metadata        Json?
+  userOwner       User?    @relation("UserAgents", fields: [ownerId], references: [id], onDelete: Cascade, map: "agents_user_owner_fkey")
+  orgOwner        Organization? @relation("OrganizationAgents", fields: [ownerId], references: [id], onDelete: Cascade, map: "agents_org_owner_fkey")
+
+  // Relations
+  workflows       Workflow[]
+  executions      WorkflowExecution[]
+  marketplaceIntegrations MarketplaceIntegration[]
+  containerResources ContainerResource[]
+
+  @@map("agents")
+}
+
+model Workflow {
+  id            String   @id @default(uuid()) @db.Uuid
+  agentId       String   @db.Uuid
+  name          String   @db.VarChar(255)
+  description   String?  @db.Text
+  workflowData  Json     @db.JsonB
+  workflowType  String   @db.VarChar(20) // 'visual' | 'code'
+  framework     String   @db.VarChar(50) // 'langgraph' | 'agno' | 'crewai' | 'n8n'
+  version       String   @default("1.0.0") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  isActive      Boolean  @default(true)
+  assignedToUserId String? @db.Uuid // For personalized workflow assignment
+
+  // Relations
+  agent     Agent               @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  executions WorkflowExecution[]
+  assignedToUser User?           @relation("AssignedWorkflows", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+
+  @@map("workflows")
+}
+
+model WorkflowExecution {
+  id              String   @id @default(uuid()) @db.Uuid
+  workflowId      String   @db.Uuid
+  agentId         String   @db.Uuid
+  status          String   @default("queued") @db.VarChar(20)
+  statusMessage   String?  @db.Text
+  startedAt       DateTime @default(now()) @db.Timestamp(6)
+  completedAt     DateTime? @db.Timestamp(6)
+  pausedAt        DateTime? @db.Timestamp(6)
+  resumedAt       DateTime? @db.Timestamp(6)
+  executionData   Json?    @db.JsonB
+  executionLogs   Json?    @db.JsonB
+  errorMessage    String?  @db.Text
+  errorCode       String?  @db.VarChar(50)
+  retryCount      Int      @default(0)
+  maxRetries      Int      @default(3)
+  resourceUsage   Json?    @db.JsonB
+  performanceMetrics Json? @db.JsonB
+  correlationId   String   @db.Uuid
+  parentExecutionId String? @db.Uuid
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamp(6)
+
+  // Relations
+  workflow      Workflow?          @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  agent         Agent              @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  parentExecution WorkflowExecution? @relation("ExecutionHierarchy", fields: [parentExecutionId], references: [id])
+  childExecutions WorkflowExecution[] @relation("ExecutionHierarchy")
+
+  @@index([status])
+  @@index([agentId, status])
+  @@index([correlationId])
+  @@index([startedAt])
+  @@map("workflow_executions")
+}
+
+// Integration Models
+model MarketplaceIntegration {
+  id                  String   @id @default(uuid()) @db.Uuid
+  agentId             String   @db.Uuid
+  marketplaceName     String   @default("hyphrki") @db.VarChar(50)
+  marketplaceAgentId  String?  @db.VarChar(255)
+  status              String   @default("pending") @db.VarChar(20)
+  publishedAt         DateTime? @db.Timestamp(6)
+  unpublishedAt       DateTime? @db.Timestamp(6)
+  usageMetrics        Json?    @db.JsonB
+  createdAt           DateTime @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime @default(now()) @updatedAt @db.Timestamp(6)
+
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("marketplace_integrations")
+}
+
+model ContainerResource {
+  id                String  @id @default(uuid()) @db.Uuid
+  agentId           String  @db.Uuid
+  subscriptionTier  String  @db.VarChar(20)
+  cpuLimit          Int
+  memoryLimitMb     Int
+  networkIsolation  String  @default("shared") @db.VarChar(20)
+  createdAt         DateTime @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime @default(now()) @updatedAt @db.Timestamp(6)
+
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("container_resources")
+}
+
+// N8N Agent Deployment System Models
+// Feature: 001-n8n-agent-deployment
+
+enum PublicationStatus {
+  draft
+  published
+  unpublished
+}
+
+enum PricingTier {
+  free
+  basic
+  pro
+  enterprise
+}
+
+enum FieldType {
+  text
+  password
+  number
+  email
+  url
+  select
+  textarea
+  checkbox
+  date
+}
+
+enum DeploymentStatus {
+  active
+  deprecated
+  archived
+}
+
+enum ExecutionStatus {
+  queued
+  running
+  completed
+  failed
+  timeout
+}
+
+enum OutputSource {
+  finalResult
+  specificNodes
+  customAggregation
+}
+
+enum DisplayFormat {
+  raw
+  formatted
+  table
+  chart
+  custom
+}
+
+model AgentTemplate {
+  id                String   @id @default(uuid()) @db.Uuid
+  name              String   @db.VarChar(255)
+  description       String   @db.Text
+  category          String   @db.VarChar(100)
+  tags              String[]
+  n8nWorkflowId     String?  @db.VarChar(255)
+  n8nWorkflowJson   Json     @db.JsonB
+  version           String   @db.VarChar(20)
+  publicationStatus PublicationStatus
+  pricingTier       PricingTier
+  createdById       String   @db.Uuid
+  createdAt         DateTime @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  publishedAt       DateTime? @db.Timestamp(6)
+  unpublishedAt     DateTime? @db.Timestamp(6)
+
+  // Relations
+  createdBy   User                   @relation("AgentTemplateCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  parameters  AgentParameterConfig[]
+  outputConfig OutputDisplayConfig?
+  deployments UserAgentDeployment[]
+  assignments UserAssignedAgent[]
+
+  @@index([publicationStatus])
+  @@index([category])
+  @@index([createdById])
+  @@index([publishedAt])
+  @@map("agent_templates")
+}
+
+model UserAssignedAgent {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @db.Uuid
+  agentTemplateId String   @db.Uuid
+  customConfig    Json?    @db.JsonB
+  assignedAt      DateTime @default(now()) @db.Timestamp(6)
+
+  // Relations
+  user          User          @relation("UserAssignedAgents", fields: [userId], references: [id], onDelete: Cascade)
+  agentTemplate AgentTemplate @relation(fields: [agentTemplateId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, agentTemplateId])
+  @@index([userId])
+  @@index([agentTemplateId])
+  @@map("user_assigned_agents")
+}
+
+model AgentParameterConfig {
+  id              String   @id @default(uuid()) @db.Uuid
+  agentTemplateId String   @db.Uuid
+  parameterName   String   @db.VarChar(255)
+  parameterPath   String   @db.VarChar(500)
+  fieldType       FieldType
+  displayLabel    String   @db.VarChar(255)
+  helpText        String?  @db.Text
+  defaultValue    String?  @db.VarChar(500)
+  isRequired      Boolean  @default(true)
+  isSensitive     Boolean  @default(false)
+  validationRules Json?    @db.JsonB
+  selectOptions   Json?    @db.JsonB
+  order           Int
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamp(6)
+
+  // Relations
+  agentTemplate AgentTemplate @relation(fields: [agentTemplateId], references: [id], onDelete: Cascade)
+
+  @@index([agentTemplateId, order])
+  @@index([isSensitive])
+  @@map("agent_parameter_configs")
+}
+
+model OutputDisplayConfig {
+  id              String   @id @default(uuid()) @db.Uuid
+  agentTemplateId String   @unique @db.Uuid
+  outputSource    OutputSource
+  displayFormat   DisplayFormat
+  nodeIds         String[]
+  fieldMappings   Json?    @db.JsonB
+  filterRules     Json?    @db.JsonB
+  customTemplate  String?  @db.Text
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamp(6)
+
+  // Relations
+  agentTemplate AgentTemplate @relation(fields: [agentTemplateId], references: [id], onDelete: Cascade)
+
+  @@map("output_display_configs")
+}
+
+model UserAgentDeployment {
+  id                   String   @id @default(uuid()) @db.Uuid
+  userId               String   @db.Uuid
+  agentTemplateId      String   @db.Uuid
+  deploymentName       String   @db.VarChar(255)
+  parameterValues      Json     @db.JsonB
+  deploymentStatus     DeploymentStatus
+  createdAt            DateTime @default(now()) @db.Timestamp(6)
+  deprecatedAt         DateTime? @db.Timestamp(6)
+  archivedAt           DateTime? @db.Timestamp(6)
+  lastExecutionAt      DateTime? @db.Timestamp(6)
+  totalExecutions      Int      @default(0)
+  agentTemplateVersion String   @db.VarChar(20)
+
+  // Relations
+  user          User            @relation("UserDeployments", fields: [userId], references: [id], onDelete: Cascade)
+  agentTemplate AgentTemplate   @relation(fields: [agentTemplateId], references: [id], onDelete: Cascade)
+  executions    AgentExecution[]
+
+  @@index([userId, deploymentStatus])
+  @@index([deploymentStatus])
+  @@index([deprecatedAt])
+  @@index([agentTemplateId])
+  @@map("user_agent_deployments")
+}
+
+model AgentExecution {
+  id              String   @id @default(uuid()) @db.Uuid
+  deploymentId    String   @db.Uuid
+  n8nExecutionId  String   @db.VarChar(255)
+  status          ExecutionStatus
+  startedAt       DateTime @default(now()) @db.Timestamp(6)
+  stoppedAt       DateTime? @db.Timestamp(6)
+  inputParameters Json     @db.JsonB
+  executionOutput Json?    @db.JsonB
+  rawOutput       Json?    @db.JsonB
+  errorMessage    String?  @db.Text
+  failedNodeId    String?  @db.VarChar(255)
+  retryCount      Int      @default(0)
+  userId          String   @db.Uuid
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+
+  // Relations
+  deployment UserAgentDeployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  user       User                @relation("UserExecutions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([deploymentId, startedAt(sort: Desc)])
+  @@index([n8nExecutionId])
+  @@index([status])
+  @@index([userId, startedAt(sort: Desc)])
+  @@index([startedAt])
+  @@map("agent_executions")
+}
