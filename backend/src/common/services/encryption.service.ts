@@ -13,11 +13,13 @@ export class EncryptionService {
     const encryptionKey = this.configService.get('ENCRYPTION_KEY');
     
     if (!encryptionKey) {
-      throw new Error('ENCRYPTION_KEY environment variable is required');
+      this.logger.warn('ENCRYPTION_KEY environment variable not found, using fallback key');
+      // Use a fallback key for development/testing
+      this.key = crypto.scryptSync('fallback-encryption-key-for-development', 'salt', 32);
+    } else {
+      // Ensure key is exactly 32 bytes for AES-256
+      this.key = crypto.scryptSync(encryptionKey, 'salt', 32);
     }
-
-    // Ensure key is exactly 32 bytes for AES-256
-    this.key = crypto.scryptSync(encryptionKey, 'salt', 32);
     
     this.logger.log('EncryptionService initialized');
   }

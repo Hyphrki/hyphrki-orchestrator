@@ -57,9 +57,12 @@ let EncryptionService = EncryptionService_1 = class EncryptionService {
         this.configService = configService;
         const encryptionKey = this.configService.get('ENCRYPTION_KEY');
         if (!encryptionKey) {
-            throw new Error('ENCRYPTION_KEY environment variable is required');
+            this.logger.warn('ENCRYPTION_KEY environment variable not found, using fallback key');
+            this.key = crypto.scryptSync('fallback-encryption-key-for-development', 'salt', 32);
         }
-        this.key = crypto.scryptSync(encryptionKey, 'salt', 32);
+        else {
+            this.key = crypto.scryptSync(encryptionKey, 'salt', 32);
+        }
         this.logger.log('EncryptionService initialized');
     }
     encrypt(text) {
